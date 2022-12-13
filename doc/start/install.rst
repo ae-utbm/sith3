@@ -7,7 +7,6 @@ Dépendances du système
 Certaines dépendances sont nécessaires niveau système :
 
 * poetry
-* libmysqlclient
 * libssl
 * libjpeg
 * libxapian-dev
@@ -15,7 +14,6 @@ Certaines dépendances sont nécessaires niveau système :
 * python
 * gettext
 * graphviz
-* mysql-client (pour migrer de l'ancien site)
 
 Sur Ubuntu
 ~~~~~~~~~~
@@ -24,9 +22,6 @@ Sur Ubuntu
 
     sudo apt install libssl-dev libjpeg-dev zlib1g-dev python-dev libffi-dev python-dev libgraphviz-dev pkg-config libxapian-dev gettext git
     curl -sSL https://install.python-poetry.org | python -
-
-    # To include mysql for importing old bdd
-    sudo apt install libmysqlclient-dev
 
 Sur MacOS
 ~~~~~~~~~
