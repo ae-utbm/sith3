@@ -1,3 +1,4 @@
+from __future__ import annotations
 # -*- coding:utf-8 -*
 #
 # Copyright 2016,2017
@@ -22,9 +23,8 @@
 #
 #
 
-from __future__ import annotations
 from django.db import models
-from django.db.models import OuterRef, Exists, QuerySet
+from django.db.models import OuterRef, Exists
 from django.db.models.functions import Length
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
