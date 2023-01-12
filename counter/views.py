@@ -21,8 +21,6 @@
 # Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 #
-import json
-from urllib.parse import parse_qs
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
@@ -48,13 +46,16 @@ from django.utils import timezone
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from django.db import DataError, transaction, models
+from django.db import DataError, transaction
 
+from urllib.parse import parse_qs
+import json
 import re
 import pytz
-from datetime import date, timedelta, datetime
+from datetime import timedelta, datetime
 from http import HTTPStatus
 
+from core.utils import get_start_of_semester
 from core.views import CanViewMixin, TabedViewMixin, CanEditMixin
 from core.views.forms import LoginForm
 from core.models import User
@@ -68,7 +69,6 @@ from counter.forms import (
     CashSummaryFormBase,
     EticketForm,
 )
-from subscription.models import Subscription
 from counter.models import (
     Counter,
     Customer,
@@ -80,7 +80,6 @@ from counter.models import (
     CashRegisterSummary,
     CashRegisterSummaryItem,
     Eticket,
-    Permanency,
     BillingInfo,
 )
 from accounting.models import CurrencyField
@@ -1365,80 +1364,21 @@ class CounterStatView(DetailView, CounterAdminMixin):
 
     def get_context_data(self, **kwargs):
         """Add stats to the context"""
-        from django.db.models import Sum, Case, When, F
-
+        counter = self.object
+        semester_start = get_start_of_semester()
+        office_hours = counter.get_top_barmen()
         kwargs = super(CounterStatView, self).get_context_data(**kwargs)
-        kwargs["Customer"] = Customer
-        kwargs["User"] = User
-        semester_start = Subscription.compute_start(d=date.today(), duration=3)
-        kwargs["total_sellings"] = Selling.objects.filter(
-            date__gte=semester_start, counter=self.object
-        ).aggregate(
-            total_sellings=Sum(
-                F("quantity") * F("unit_price"), output_field=CurrencyField()
-            )
-        )[
-            "total_sellings"
-        ]
-        kwargs["top"] = (
-            Selling.objects.values("customer__user")
-            .annotate(
-                selling_sum=Sum(
-                    Case(
-                        When(
-                            counter=self.object,
-                            date__gte=semester_start,
-                            unit_price__gt=0,
-                            then=F("unit_price") * F("quantity"),
-                        ),
-                        output_field=CurrencyField(),
-                    )
-                )
-            )
-            .exclude(selling_sum=None)
-            .order_by("-selling_sum")
-            .all()[:100]
+        kwargs.update(
+            {
+                "counter": counter,
+                "total_sellings": counter.get_total_sales(since=semester_start),
+                "top_customers": counter.get_top_customers(since=semester_start)[:100],
+                "top_barman": office_hours[:100],
+                "top_barman_semester": (
+                    office_hours.filter(start__gt=semester_start)[:100]
+                ),
+            }
         )
-        kwargs["top_barman"] = (
-            Permanency.objects.values("user")
-            .annotate(
-                perm_sum=Sum(
-                    Case(
-                        When(
-                            counter=self.object,
-                            end__gt=datetime(year=1999, month=1, day=1),
-                            then=F("end") - F("start"),
-                        ),
-                        output_field=models.DateTimeField(),
-                    )
-                )
-            )
-            .exclude(perm_sum=None)
-            .order_by("-perm_sum")
-            .all()[:100]
-        )
-        kwargs["top_barman_semester"] = (
-            Permanency.objects.values("user")
-            .annotate(
-                perm_sum=Sum(
-                    Case(
-                        When(
-                            counter=self.object,
-                            start__gt=semester_start,
-                            end__gt=datetime(year=1999, month=1, day=1),
-                            then=F("end") - F("start"),
-                        ),
-                        output_field=models.DateTimeField(),
-                    )
-                )
-            )
-            .exclude(perm_sum=None)
-            .order_by("-perm_sum")
-            .all()[:100]
-        )
-
-        kwargs["sith_date"] = settings.SITH_START_DATE[0]
-        kwargs["semester_start"] = semester_start
         return kwargs
 
     def dispatch(self, request, *args, **kwargs):
