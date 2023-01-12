@@ -26,7 +26,7 @@ from __future__ import annotations
 from typing import Tuple
 
 from django.db import models
-from django.db.models import F, Value, Sum, QuerySet
+from django.db.models import F, Value, Sum, QuerySet, OuterRef, Exists
 from django.db.models.functions import Concat, Length
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
