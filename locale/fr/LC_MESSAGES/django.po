@@ -3171,9 +3171,13 @@ msgstr "Avatar"
 msgid "Scrub"
 msgstr "Blouse"
 
-#: core/templates/core/user_detail.jinja:141
-msgid "Not subscribed"
-msgstr "Non cotisant"
+#: core/templates/core/user_detail.jinja:160
+msgid "Not subscribed for %(y)s year(s) %(m)s month(s) %(d)s day(s) (%(date)s)"
+msgstr "Non cotisant depuis %(y)s année(s) %(m)s mois %(d)s jour(s) (%(date)s)"
+
+#: core/templates/core/user_detail.jinja:162
+msgid "Never subscribed"
+msgstr "N'a jamais cotisé"
 
 #: core/templates/core/user_detail.jinja:143
 #: subscription/templates/subscription/subscription.jinja:4
@@ -4188,7 +4192,15 @@ msgstr "Choisir un autre mois : "
 
 #: counter/templates/counter/invoices_call.jinja:19
 msgid "CB Payments"
-msgstr "Payements en Carte Bancaire"
+msgstr "Paiements en Carte Bancaire"
+
+#: counter/templates/counter/invoices_call.jinja:21
+msgid "Money accross all users account : %(money)s € (on %(users)s account(s))"
+msgstr "Argent sur tous les comptes utilisateurs : %(money)s € (sur %(users)s compte(s))"
+
+#: counter/templates/counter/invoices_call.jinja:26
+msgid "Including those who have not been contributors for at least %(year)s year(s) : %(money)s € (on %(users)s account(s))"
+msgstr "Dont ceux qui n'ont pas été cotisant depuis au moins %(year)s an(s) : %(money)s € (sur %(users)s compte(s))"
 
 #: counter/templates/counter/last_ops.jinja:5
 #: counter/templates/counter/last_ops.jinja:15

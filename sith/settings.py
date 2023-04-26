@@ -44,6 +44,7 @@ import sys
 import sentry_sdk
 from django.utils.translation import gettext_lazy as _
 from sentry_sdk.integrations.django import DjangoIntegration
+from dateutil.relativedelta import relativedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -381,6 +382,9 @@ SITH_PROFILE_DEPARTMENTS = [
     ("HUMA", _("Humanities")),
     ("NA", _("N/A")),
 ]
+
+SITH_ACCOUNTING_DELTA_NOTIFICATION = {"years": 1, "months": 10}
+SITH_ACCOUNTING_DELTA_DUMP = {"years": 2, "months": 0}
 
 SITH_ACCOUNTING_PAYMENT_METHOD = [
     ("CHECK", _("Check")),
