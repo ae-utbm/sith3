@@ -40,6 +40,7 @@ from core.views import (
     CanEditPropMixin,
     can_view,
 )
+from core.views.forms import MultipleFileField
 from counter.models import Counter
 
 
@@ -83,8 +84,7 @@ class AddFilesForm(forms.Form):
     folder_name = forms.CharField(
         label=_("Add a new folder"), max_length=30, required=False
     )
-    file_field = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={"multiple": True}),
+    file_field = MultipleFileField(
         label=_("Files"),
         required=False,
     )
