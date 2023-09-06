@@ -21,5 +21,6 @@ This project was previously released under the MIT license, but it has since bee
 - [@TheoDurr](https://github.com/TheoDurr) — Théo "Ailé" Durr <git@theodurr.fr>
 - [@RTrioux](https://github.com/RTrioux) — Robin "Vial" Trioux
 - [@TheRolfFR](https://github.com/TheRolfFR) — Yann "Réseau" Le Vaguerès
+- [@Magador](https://github.com/Magador) — Lucie "Magador" Lenglet
 
 _If you've contributed to this project and your name isn't on the list, please let us know so we can add you. And if you've contributed anonymously, thank you! We appreciate your contributions just as much as those from named contributors._
