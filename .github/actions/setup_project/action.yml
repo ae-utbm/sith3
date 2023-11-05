@@ -6,13 +6,13 @@ runs:
     - name: Install apt packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: gettext libxapian-dev libgraphviz-dev
-        version: 1.0  # increment to reset cache
+        packages: gettext libgraphviz-dev
+        version: 1.0 # increment to reset cache
 
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install gettext libxapian-dev libgraphviz-dev
+        sudo apt install gettext libgraphviz-dev
       shell: bash
 
     - name: Set up python
@@ -25,7 +25,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ~/.local
-        key: poetry-0  # increment to reset cache
+        key: poetry-0 # increment to reset cache
 
     - name: Install Poetry
       if: steps.cached-poetry.outputs.cache-hit != 'true'

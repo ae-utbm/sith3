@@ -31,7 +31,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - uses: ./.github/actions/setup_project
-      - uses: ./.github/actions/setup_xapian
       - uses: ./.github/actions/compile_messages
       - name: Run tests
         run: poetry run coverage run ./manage.py test
