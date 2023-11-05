@@ -191,9 +191,9 @@ TEMPLATES = [
 
 HAYSTACK_CONNECTIONS = {
     "default": {
-        "ENGINE": "xapian_backend.XapianEngine",
-        "PATH": os.path.join(os.path.dirname(__file__), "search_indexes", "xapian"),
-        "INCLUDE_SPELLING": True,
+        "ENGINE": "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
+        'URL': 'http://localhost:9200/',
+        'INDEX_NAME': 'haystack',
     }
 }
 
