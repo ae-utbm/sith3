@@ -16,9 +16,10 @@
                 {# Thile file is quite heavy (around 250kb), so declaring it in a block allows easy removal #}
                 <link rel="stylesheet" href="{{ static('core/js/ui/jquery-ui.min.css') }}">
             {% endblock %}
-            <link rel="preload" as="style" href="{{ static('core/font-awesome/css/font-awesome.min.css') }}" onload="this.onload=null;this.rel='stylesheet'">
-            <noscript><link rel="stylesheet" href="{{ static('core/font-awesome/css/font-awesome.min.css') }}"></noscript>
-            <script defer href="{{ static('core/font-awesome/js/fontawesone.min.js') }}"></script>
+            <!-- Font Awesome 6 -->
+            <link rel="preload" as="style" href="{{ static('core/fontawesome/css/all.min.css') }}" onload="this.onload=null;this.rel='stylesheet'">
+            <noscript><link rel="stylesheet" href="{{ static('core/fontawesome/css/all.min.css') }}"></noscript>
+            <script defer href="{{ static('core/fontawesome/js/all.min.js') }}"></script>
 
             <!-- Jquery declared here to be accessible in every django widgets -->
             <script src="{{ static('core/js/jquery-3.6.2.min.js') }}"></script>
@@ -72,11 +73,11 @@
                                                     <a href="{{ url('counter:activity', counter_id=bar.id) }}">
                                                 {% endif %}
                                                 {% if bar.is_inactive() %}
-                                                  <i class="fa fa-question" style="color: #f39c12"></i>
+                                                  <i class="fa-solid fa-question" style="color: #f39c12"></i>
                                                 {% elif bar.is_open(): %}
-                                                  <i class="fa fa-check" style="color: #2ecc71"></i>
+                                                  <i class="fa-solid fa-check" style="color: #2ecc71"></i>
                                                 {% else %}
-                                                  <i class="fa fa-times" style="color: #eb2f06"></i>
+                                                  <i class="fa-solid fa-xmark" style="color: #eb2f06"></i>
                                                 {% endif %}
                                                 <span>{{ bar }}</span>
                                                 </a>
@@ -87,14 +88,8 @@
                             </div>
                             <div class="right">
                                 <div class="user">
-                                    <div class="options">
-                                        <div class="username">
-                                            <a href="{{ url('core:user_profile', user_id=user.id) }}">{{ user.get_display_name() }}</a>
-                                        </div>
-                                        <div class="links">
-                                            <a href="{{ url('core:user_tools') }}">{% trans %}Tools{% endtrans %}</a>
-                                            <a href="{{ url('core:logout') }}">{% trans %}Logout{% endtrans %}</a>
-                                        </div>
+                                    <div class="username">
+                                        <a href="{{ url('core:user_profile', user_id=user.id) }}">{{ user.get_display_name() }}</a>
                                     </div>
                                     <a 
                                         href="{{ url('core:user_profile', user_id=user.id) }}"
@@ -105,54 +100,54 @@
                                         {% endif %}                                  
                                     ></a>
                                 </div>
-                                <div class="notification">
-                                    <a href="#" onclick="display_notif()">
-                                        <i class="fa fa-bell-o"></i>
-                                        {% set notification_count = user.notifications.filter(viewed=False).count() %}
 
-                                        {% if notification_count > 0 %}
-                                        <span>
-                                            {% if notification_count < 100 %}
-                                                {{ notification_count }}
-                                            {% else %}
-                                                &nbsp;
-                                            {% endif %}
-                                        </span>
-                                        {% endif %}
-                                    </a>
-                                    <div id="header_notif">
-                                        <ul>
-                                            {% if user.notifications.filter(viewed=False).count() > 0 %}
+                                <div class="links">
+                                    <div class="notification">
+                                        <a href="#" onclick="display_notif()">
+                                            <i class="fa-solid fa-bell"></i>
+                                            {% set notification_count = user.notifications.filter(viewed=False).count() %}
+                                    
+                                            {% if notification_count > 0 %}
+                                            <span>
+                                                {% if notification_count < 100 %} {{ notification_count }} {% else %} &nbsp; {% endif %} </span>
+                                                    {% endif %}
+                                        </a>
+                                        <div id="header_notif">
+                                            <ul>
+                                                {% if user.notifications.filter(viewed=False).count() > 0 %}
                                                 {% for n in user.notifications.filter(viewed=False).order_by('-date') %}
-                                                    <li>
-                                                        <a href="{{ url("core:notification", notif_id=n.id) }}">
-                                                            <div class="datetime">
-                                                                <span class="header_notif_date">
-                                                                    {{ n.date|localtime|date(DATE_FORMAT) }}
-                                                                </span>
-                                                                <span class="header_notif_time">
-                                                                    {{ n.date|localtime|time(DATETIME_FORMAT) }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="reason">
-                                                                {{ n }}
-                                                            </div>
-                                                        </a>
-                                                    </li>
+                                                <li>
+                                                    <a href="{{ url('core:notification', notif_id=n.id) }}">
+                                                        <div class="datetime">
+                                                            <span class="header_notif_date">
+                                                                {{ n.date|localtime|date(DATE_FORMAT) }}
+                                                            </span>
+                                                            <span class="header_notif_time">
+                                                                {{ n.date|localtime|time(DATETIME_FORMAT) }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="reason">
+                                                            {{ n }}
+                                                        </div>
+                                                    </a>
+                                                </li>
                                                 {% endfor %}
-                                            {% else %}
+                                                {% else %}
                                                 <li class="empty-notification">{% trans %}You do not have any unread notification{% endtrans %}</li>
-                                            {% endif %}
-                                        </ul>
-                                        <div class="options">
-                                            <a href="{{ url('core:notification_list') }}">
-                                                {% trans %}View more{% endtrans %}
-                                            </a>
-                                            <a href="{{ url('core:notification_list') }}?see_all">
-                                                {% trans %}Mark all as read{% endtrans %}
-                                            </a>
+                                                {% endif %}
+                                            </ul>
+                                            <div class="options">
+                                                <a href="{{ url('core:notification_list') }}">
+                                                    {% trans %}View more{% endtrans %}
+                                                </a>
+                                                <a href="{{ url('core:notification_list') }}?see_all">
+                                                    {% trans %}Mark all as read{% endtrans %}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
+                                    <a href="{{ url('core:user_tools') }}"><i class="fa-solid fa-wrench"></i></a>
+                                    <a href="{{ url('core:logout') }}"><i class="fa-solid fa-right-from-bracket"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -195,7 +190,7 @@
         {% block nav %}
             {% if not popup %}
                 <nav class="navbar">
-                    <button class="expand-button" onclick="showMenu()"><i class="fa fa-bars"></i></button>
+                    <button class="expand-button" onclick="showMenu()"><i class="fa-solid fa-bars"></i></button>
                     <div id="navbar-content" class="content" style="display: none;">
                         <a class="link" href="{{ url('core:index') }}">{% trans %}Main{% endtrans %}</a>
                         <div class="menu">
