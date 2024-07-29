@@ -2,10 +2,12 @@
 
 {%- block additional_css -%}
   <link rel="stylesheet" href="{{ scss('sas/picture.scss') }}">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {%- endblock -%}
 
 {%- block additional_js -%}
   <script src="{{ static('core/js/alpinejs.min.js') }}" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {%- endblock -%}
 
 {% block head %}
@@ -147,7 +149,52 @@
         <h5>{% trans %}People{% endtrans %}</h5>
         <form action="" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          {{ form.as_p() }}
+          {{ form.errors }}
+          <select id="id_users" class="js-data-example-ajax" name="users" multiple="multiple">
+          </select>
+          {{ form.picture }}
+          <script>
+            $(document).ready(function() {
+              jQuery.ajaxSettings.traditional = true;
+              $('.js-data-example-ajax').select2({
+                ajax: {
+                  url: "/api/lookups/users",
+                  dataType: "json",
+                  cache: true,
+                  delay: 250,
+                  data: function (params) {
+                    return {
+                      search: params.term,
+                      exclude: this.val()
+                    };
+                  },
+                  processResults: function (data, param) {
+                    return { results: data.results };
+                  }
+                },
+                templateResult: miniProfile,
+                templateSelection: miniProfile,
+                minimumInputLength: 2,
+                width: '100%',
+                language: "FR-fr",
+              });
+              function miniProfile(user) {
+                if (user.loading) {
+                  return user.text;
+                }
+
+                let container = $(
+                  "<div class='mini_profile_link' >" +
+                  "<span>" +
+                  "<img src='" + user.picture + "' alt='" + user.text + "' />" +
+                  "</span>" +
+                  "<em>" + user.text + "</em>" +
+                  "</div>"
+                );
+                return container;
+              }
+            });
+          </script>
           <input type="submit" value="{% trans %}Go{% endtrans %}" />
         </form>
         <ul x-data="user_identification">

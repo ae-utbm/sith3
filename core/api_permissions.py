@@ -42,6 +42,8 @@ from django.http import HttpRequest
 from ninja_extra import ControllerBase
 from ninja_extra.permissions import BasePermission
 
+from counter.models import Counter
+
 
 class IsInGroup(BasePermission):
     """Check that the user is in the group whose primary key is given."""
@@ -72,6 +74,16 @@ class IsOldSubscriber(BasePermission):
 
     def has_permission(self, request: HttpRequest, controller: ControllerBase) -> bool:
         return request.user.was_subscribed
+
+
+class IsLoggedInCounter(BasePermission):
+    """Check that an user is logged in a counter."""
+
+    def has_permission(self, request: HttpRequest, controller: ControllerBase) -> bool:
+        token = request.session.get("counter_token")
+        if not token:
+            return False
+        return Counter.objects.filter(token=token).exists()
 
 
 class CanView(BasePermission):

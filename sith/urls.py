@@ -12,6 +12,7 @@
 # OR WITHIN THE LOCAL FILE "LICENSE"
 #
 #
+import os
 
 from ajax_select import urls as ajax_select_urls
 from django.conf import settings
@@ -29,6 +30,11 @@ handler500 = "core.views.internal_servor_error"
 
 api = NinjaExtraAPI(version="0.2.0", urls_namespace="api")
 api.auto_discover_controllers()
+
+if settings.DEBUG:
+    os.environ["NINJA_SKIP_REGISTRY"] = (
+        "yes"  # Avoid double registration when having errors in dev
+    )
 
 urlpatterns = [
     path("", include(("core.urls", "core"), namespace="core")),

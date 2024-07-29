@@ -14,7 +14,6 @@
 #
 
 from ajax_select import make_ajax_field
-from ajax_select.fields import AutoCompleteSelectMultipleField
 from django import forms
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -90,8 +89,13 @@ class RelationForm(forms.ModelForm):
         fields = ["picture"]
         widgets = {"picture": forms.HiddenInput}
 
-    users = AutoCompleteSelectMultipleField(
-        "users", show_help_text=False, help_text="", label=_("Add user"), required=False
+    # users = AutoCompleteSelectMultipleField(
+    #     "users", show_help_text=False, help_text="", label=_("Add user"), required=False
+    # )
+    users = forms.ModelMultipleChoiceField(
+        User.objects.all(),
+        label=_("Add user"),
+        required=False,
     )
 
 
@@ -155,23 +159,22 @@ class PictureView(CanViewMixin, DetailView, FormMixin):
         self.form = self.get_form()
         if request.user.is_authenticated and request.user.was_subscribed:
             if self.form.is_valid():
-                for uid in self.form.cleaned_data["users"]:
-                    u = User.objects.filter(id=uid).first()
-                    if not u:  # Don't use a non existing user
-                        continue
+                for user in self.form.cleaned_data["users"]:
                     if PeoplePictureRelation.objects.filter(
-                        user=u, picture=self.form.cleaned_data["picture"]
+                        user=user, picture=self.form.cleaned_data["picture"]
                     ).exists():  # Avoid existing relation
                         continue
                     PeoplePictureRelation(
-                        user=u, picture=self.form.cleaned_data["picture"]
+                        user=user, picture=self.form.cleaned_data["picture"]
                     ).save()
-                    if not u.notifications.filter(
+                    if not user.notifications.filter(
                         type="NEW_PICTURES", viewed=False
                     ).exists():
                         Notification(
-                            user=u,
-                            url=reverse("core:user_pictures", kwargs={"user_id": u.id}),
+                            user=user,
+                            url=reverse(
+                                "core:user_pictures", kwargs={"user_id": user.id}
+                            ),
                             type="NEW_PICTURES",
                         ).save()
                 return super().form_valid(self.form)
