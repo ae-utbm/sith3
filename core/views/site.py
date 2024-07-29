@@ -27,6 +27,7 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -74,23 +75,30 @@ def notification(request, notif_id):
     return redirect("/")
 
 
-def search_user(query):
-    try:
-        # slugify turns everything into ascii and every whitespace into -
-        # it ends by removing duplicate - (so ' - ' will turn into '-')
-        # replace('-', ' ') because search is whitespace based
-        query = slugify(query).replace("-", " ")
-        # TODO: is this necessary?
-        query = html.escape(query)
-        res = (
-            SearchQuerySet()
-            .models(User)
-            .autocomplete(auto=query)
-            .order_by("-last_update")[:20]
+def search_user(query: str) -> list[User]:
+    if len(query) < 4:
+        # For small queries, full text search isn't necessary
+        return list(
+            User.objects.filter(
+                Q(first_name__istartswith=query)
+                | Q(last_name__istartswith=query)
+                | Q(nick_name__istartswith=query)
+            )[:20]
         )
-        return [r.object for r in res]
-    except TypeError:
-        return []
+    # slugify turns everything into ascii and every whitespace into -
+    # it ends by removing duplicate - (so ' - ' will turn into '-')
+    # replace('-', ' ') because search is whitespace based
+    query = slugify(query).replace("-", " ")
+    # TODO: is this necessary?
+    query = html.escape(query)
+    res = (
+        SearchQuerySet()
+        .models(User)
+        .autocomplete(auto=query)
+        .order_by("-last_update")
+        .load_all()
+    )[:20]
+    return [r.object for r in res]
 
 
 def search_club(query, *, as_json=False):
