@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.utils.text import slugify
 from haystack.query import SearchQuerySet
 from ninja import FilterSchema, ModelSchema, Schema
+from pydantic import Field, AliasChoices
 
 from core.models import User
 
@@ -46,7 +47,7 @@ class UserProfileSchema(ModelSchema):
 
 class UserFilterSchema(FilterSchema):
     search: Annotated[str, MinLen(1)]
-    exclude: set[int] | None = None
+    exclude: list[int] | None = Field(None, validation_alias=AliasChoices("exclude", "exclude[]"))
 
     def filter_search(self, value: str | None) -> Q:
         if not value:

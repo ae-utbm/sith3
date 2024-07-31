@@ -2,10 +2,12 @@
 
 {%- block additional_css -%}
   <link rel="stylesheet" href="{{ scss('sas/picture.scss') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {%- endblock -%}
 
 {%- block additional_js -%}
   <script src="{{ static('core/js/alpinejs.min.js') }}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {%- endblock -%}
 
 {% block head %}
@@ -76,7 +78,7 @@
     </div>
   {% endif %}
 
-  <div class="container">
+  <div class="container" id="pict">
     <div class="main">
 
       <div class="photo">
@@ -143,14 +145,14 @@
         </div>
       </div>
 
-      <div class="tags">
+      <div class="tags" x-data="user_identification">
         <h5>{% trans %}People{% endtrans %}</h5>
-        <form action="" method="post" enctype="multipart/form-data">
+        <form>
           {% csrf_token %}
-          {{ form.as_p() }}
-          <input type="submit" value="{% trans %}Go{% endtrans %}" />
+          <select x-ref="search" class="search-input" name="users" multiple="multiple"></select>
+          <input type="submit" value="{% trans %}Go{% endtrans %}" @submit.prevent="" />
         </form>
-        <ul x-data="user_identification">
+        <ul>
           <template x-for="item in items" :key="item.id">
             <li>
               <a class="user" :href="item.user.url">
@@ -173,6 +175,9 @@
   <script>
     document.addEventListener("alpine:init", () => {
       Alpine.data("user_identification", () => ({
+        selector: undefined,
+        /** The users selected with the select2 input */
+        users_selected: [],
         items: [
           {%- for r in picture.people.select_related("user", "user__profile_pict") -%}
             {
@@ -190,6 +195,17 @@
             },
           {%- endfor -%}
         ],
+        init() {
+          this.selector = sithSelect2({
+              element: $(this.$refs.search),
+              data_source: remote_data_source("/api/user/search", {
+                excluded: () => [...this.items.map((i) => i.user.id), ...this.users_selected.map((i) => i.id)],
+                result_converter: (obj) => Object({...obj, text: obj.display_name})
+              })
+          });
+          {#this.selector.on("select2:select", (event) => )#}
+        },
+
         can_be_removed(item) {
           {# If user is root or sas admin, he has the right, at "compile" time.
              If not, he can delete only its own identification. #}
@@ -207,6 +223,7 @@
         },
       }))
     });
+
     $(() => {
       $(document).keydown((e) => {
         switch (e.keyCode) {

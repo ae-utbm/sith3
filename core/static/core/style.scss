@@ -316,6 +316,20 @@ a:not(.button) {
     }
   }
 
+  .select2 {
+    margin: 0;
+    max-width: 100%;
+    min-width: 100%;
+
+    ul {
+      margin: 0;
+    }
+
+    textarea {
+      background-color: inherit;
+    }
+  }
+
 /*---------------------------------NEWS--------------------------------*/
   #news {
     display: flex;
@@ -1129,13 +1143,6 @@ u,
   }
 }
 
-/* XXX This seems to be used in the SAS */
-#pict {
-  display: inline-block;
-  width: 80%;
-  background: hsl(0, 0%, 20%);
-  border: solid hsl(0, 0%, 20%) 2px;
-}
 /*--------------------------------MATMAT-------------------------------*/
 .matmat_results {
   display: flex;

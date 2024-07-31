@@ -153,31 +153,31 @@ class PictureView(CanViewMixin, DetailView, FormMixin):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.form = self.get_form()
-        if request.user.is_authenticated and request.user.was_subscribed:
-            if self.form.is_valid():
-                for uid in self.form.cleaned_data["users"]:
-                    u = User.objects.filter(id=uid).first()
-                    if not u:  # Don't use a non existing user
-                        continue
-                    if PeoplePictureRelation.objects.filter(
-                        user=u, picture=self.form.cleaned_data["picture"]
-                    ).exists():  # Avoid existing relation
-                        continue
-                    PeoplePictureRelation(
-                        user=u, picture=self.form.cleaned_data["picture"]
-                    ).save()
-                    if not u.notifications.filter(
-                        type="NEW_PICTURES", viewed=False
-                    ).exists():
-                        Notification(
-                            user=u,
-                            url=reverse("core:user_pictures", kwargs={"user_id": u.id}),
-                            type="NEW_PICTURES",
-                        ).save()
-                return super().form_valid(self.form)
-        else:
+        if not (request.user.is_authenticated and request.user.was_subscribed):
             self.form.add_error(None, _("You do not have the permission to do that"))
-        return self.form_invalid(self.form)
+            return self.form_invalid(self.form)
+        if not self.form.is_valid():
+            return self.form_invalid(self.form)
+        print(self.form.cleaned_data)
+        users = User.objects.filter(id__in=self.form.cleaned_data["users"])
+        for u in users:
+            print(u)
+            if PeoplePictureRelation.objects.filter(
+                user=u, picture=self.form.cleaned_data["picture"]
+            ).exists():  # Avoid existing relation
+                continue
+            PeoplePictureRelation(
+                user=u, picture=self.form.cleaned_data["picture"]
+            ).save()
+            if not u.notifications.filter(
+                type="NEW_PICTURES", viewed=False
+            ).exists():
+                Notification(
+                    user=u,
+                    url=reverse("core:user_pictures", kwargs={"user_id": u.id}),
+                    type="NEW_PICTURES",
+                ).save()
+        return super().form_valid(self.form)
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)

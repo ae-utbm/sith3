@@ -43,4 +43,7 @@ class UserController(ControllerBase):
     )
     @paginate(PageNumberPaginationExtra, page_size=20)
     def search_users(self, filters: Query[UserFilterSchema]):
+        print(self.context.request.GET)
+        print(filters)
+        print(list(filters.filter(User.objects.all())))
         return filters.filter(User.objects.all())
