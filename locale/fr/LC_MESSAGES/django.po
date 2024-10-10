@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-10 19:27+0200\n"
+"POT-Creation-Date: 2024-10-10 21:50+0200\n"
 "PO-Revision-Date: 2016-07-18\n"
 "Last-Translator: Maréchal <thomas.girod@utbm.fr\n"
 "Language-Team: AE info <ae.info@utbm.fr>\n"
@@ -3885,34 +3885,27 @@ msgstr "cartes étudiante"
 #: counter/templates/counter/account_dump_warning_mail.jinja:6
 #, python-format
 msgid ""
-"\n"
-"    You received this email because your last subscription to the\n"
-"    Students' association ended on %(date)s.\n"
-"  "
+"You received this email because your last subscription to the\n"
+"    Students' association ended on %(date)s."
 msgstr ""
-"\n"
 "Vous recevez ce mail car votre dernière cotisation à l'assocation des "
-"étudiants de l'UTBM s'est achevée le %(date)s.\n"
-" "
+"étudiants de l'UTBM s'est achevée le %(date)s."
 
-#: counter/templates/counter/account_dump_warning_mail.jinja:13
+#: counter/templates/counter/account_dump_warning_mail.jinja:11
 #, python-format
 msgid ""
-"\n"
-"    In accordance with the Internal Regulations, the balance of any\n"
+"In accordance with the Internal Regulations, the balance of any\n"
 "    inactive AE account for more than 2 years automatically goes back\n"
 "    to the AE.\n"
 "    The money present on your account will therefore be recovered in full\n"
-"    on %(date)s.\n"
-"  "
+"    on %(date)s, for a total of %(amount)s €."
 msgstr ""
-"\n"
 "Conformément au Règlement intérieur, le solde de tout compte AE inactif "
 "depuis plus de 2 ans revient de droit à l'AE. L'argent présent sur votre "
-"compte sera donc récupéré en totalité le %(date)s.\n"
+"compte sera donc récupéré en totalité le %(date)s, pour un total de %(amount)s €."
 " "
 
-#: counter/templates/counter/account_dump_warning_mail.jinja:23
+#: counter/templates/counter/account_dump_warning_mail.jinja:19
 msgid ""
 "However, if your subscription is renewed by this date,\n"
 "    your right to keep the money in your AE account will be renewed."
@@ -3920,7 +3913,7 @@ msgstr ""
 "Cependant, si votre cotisation est renouvelée d'ici cette date, votre droit "
 "à conserver l'argent de votre compte AE sera renouvelé."
 
-#: counter/templates/counter/account_dump_warning_mail.jinja:29
+#: counter/templates/counter/account_dump_warning_mail.jinja:25
 msgid ""
 "You can also request a refund by sending an email to\n"
 "      <a href=\"mailto:ae@utbm.fr\">ae@utbm.fr</a>\n"
@@ -3930,7 +3923,7 @@ msgstr ""
 "l'adresse <a href=\"mailto:ae@utbm.fr\">ae@utbm.fr</a> avant la date "
 "susmentionnée."
 
-#: counter/templates/counter/account_dump_warning_mail.jinja:36
+#: counter/templates/counter/account_dump_warning_mail.jinja:32
 msgid "Sincerely"
 msgstr "Cordialement"
 
